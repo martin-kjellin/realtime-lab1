@@ -36,7 +36,7 @@ procedure Scheduler is
 	 Put_Line("Deadline exceeded!");
 	 Main.Exceeded;
       end Watchdog;
-	
+      
    begin
       Put("F3 executing, time is now:");
       Put_Line(Duration'Image(Clock - Start_Time));
@@ -52,26 +52,26 @@ procedure Scheduler is
 	 F2;
 	 
 	 delay until Next_Time;
-      Next_Time := Next_Time + Short_Period;
-      F3;
-      delay until Next_Time;
-      select
-	 accept Exceeded do
-	    Next_Time := Next_Time + Long_Period;
-	    delay until Next_Time;
-	 end Exceeded;
-      or
-	 accept Not_Exceeded;
-      end select;
-      
-      Next_Time := Next_Time + Long_Period;
-      F1;
-      F2;
-      delay until Next_Time;
-      Next_Time := Next_Time + Short_Period;
-   end loop;
+	 Next_Time := Next_Time + Short_Period;
+	 F3;
+	 delay until Next_Time;
+	 select
+	    accept Exceeded do
+	       Next_Time := Next_Time + Long_Period;
+	       delay until Next_Time;
+	    end Exceeded;
+	 or
+	    accept Not_Exceeded;
+	 end select;
+	 
+	 Next_Time := Next_Time + Long_Period;
+	 F1;
+	 F2;
+	 delay until Next_Time;
+	 Next_Time := Next_Time + Short_Period;
+      end loop;
    end Main;
-     
+   
    
 begin
    Put_Line("Running");
