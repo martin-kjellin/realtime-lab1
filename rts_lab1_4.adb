@@ -9,9 +9,8 @@ procedure rts_lab1_4 is
    protected Buffer is -- Declarations of the Buffer
       entry Put(X : in integer);
       entry Get(X : out integer);
-      entry Stop;
    private
-      Size : constant Integer := 15; -- Size of the Buffer
+      Size : Integer := 15; -- Size of the Buffer
       B : array (1..Size) of Integer; -- Container of the Buffer
       Front : Integer := 0; -- Point to the top position of the Buffer
       Running : Boolean := True; -- keep running Buffer(True) or not(False)
@@ -19,33 +18,20 @@ procedure rts_lab1_4 is
    end Buffer;
 
    protected body Buffer is -- Definition of Buffer task 
-   begin
-      while Running = True loop
-	 select
-	    when Number < Size => -- if the Buffer is not full
-	       accept Put(X : in Integer) do
-		  B((Front + Number) mod Size + 1) := X; -- put x on the bottom 
-		  Number := Number + 1; -- The number of integers in the Buffer plus one
-	       end Put;
-	       
-	 or
-
-	    when Number > 0 => -- if the Buffer is not empty
-	       accept Get(X : out Integer) do 
+      entry Put(X : in integer) when Number < Size is-- if the Buffer is not full 
+      begin
+	B((Front + Number) mod Size + 1) := X; -- put x on the bottom 
+	Number := Number + 1; -- The number of integers in the Buffer plus one
+      end Put;
+	  
+      entry Get(X : out integer) when Number > 0 is -- if the Buffer is not empty
+	 begin
+	   
 		  X := B(Front mod Size + 1); -- get x from the top of the buffer
 		  Number := Number - 1; -- The number of integers in the Buffer minus one 
 		  Front := Front + 1; -- Point to the next top position of the Buffer
 	       end Get;
-	    
-	 or
-	
-	    accept Stop do
-	       Running := False;
-	    end Stop;
-	    
-	 end select;
-      end loop;
-   end buffer;
+   end Buffer;
    
    task Producer is -- Declarations of the Producer
       entry Stop;
