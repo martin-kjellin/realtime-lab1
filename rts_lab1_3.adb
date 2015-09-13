@@ -1,21 +1,22 @@
---rts_lab1.adb
---Real Time System Lab1
-with Ada.Text_IO; -- Use package Ada.Text_IO
-use Ada.Text_IO; -- Integrate its namespace
+with Ada.Text_IO;
+use Ada.Text_IO;
 with Ada.Numerics.Discrete_Random;
-use Ada.Numerics.Discrete_Random;
---with Ada.Calendar; 
--- Use package Ada.Calendar
-		 --use Ada.Calendar;
-		 --with Ada.Numerics.Float_Random;
-		 --use Ada.Numerics.Float_Random;
 
 procedure rts_lab1_3 is
+   package Integer_Random is new Ada.Numerics.Discrete_Random(Integer);
+   use Integer_Random;
+   
    task Buffer is
       entry Put(X : in integer);
       entry Get(X : out integer);
       entry Stop;
    end;
+   
+   task Producer is
+      entry Stop;
+   end;
+   
+   task Consumer;
    
    task body Buffer is
       Size : constant Integer := 15;
@@ -50,8 +51,31 @@ procedure rts_lab1_3 is
 	 end select;
       end loop;
    end buffer;
-
-   task Consumer;
+   
+   task body Producer is
+      G : Generator;
+      Produce_Range : constant Integer := 26;
+      New_Value : Integer;
+      Running : Boolean := True;
+   begin
+      Reset(G);
+      while Running = True loop
+	 select
+	    
+	    accept Stop do
+	       Running := False;
+	    end Stop;
+	    
+	 else
+	    
+	    New_Value := Random(G) mod Produce_Range;
+	    Put("To buffer:");
+	    Put_Line(Integer'Image(New_Value));
+	    Buffer.Put(New_Value);
+	    
+	 end select;
+      end loop;
+   end Producer;
    
    task body Consumer is
       Sum : Integer := 0;
@@ -59,20 +83,14 @@ procedure rts_lab1_3 is
    begin
       while Sum <= 100 loop
 	 Buffer.Get(New_Value);
+	 Put("From buffer:");
+	 Put_Line(Integer'Image(New_Value));
 	 Sum := Sum + New_Value;
       end loop;
-      --      Producer.Stop;
+      Producer.Stop;
       Buffer.Stop;
    end Consumer;
-   
-   task body Producer is
-      G : Generator;
-      Produce_Range : constant Interage := 26;
-   begin
-      reset(G);
-      Buffer.Put(Radom(G) % Produce_Range);
-   end Producer;
-   
+
 begin 
    null;
 end rts_lab1_3;
