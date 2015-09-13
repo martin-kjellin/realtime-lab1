@@ -22,24 +22,43 @@ procedure Scheduler_Watch is
    end F2;
    
    procedure F3 is
-      task Watchdog;
+      task Watchdog is
+	 entry Stop;
+      end;
       
       task body Watchdog is
 	 Alarm_Time : Time := Clock + Short_Period;
+	 Running : Boolean := True;
       begin
-	 while Clock < Alarm_Time loop
-	    null;
+	 while Running = True loop
+	    select
+	       
+	       accept Stop do
+		  Running := False;
+	       end Stop;
+	       
+	    else
+	       
+	       if Clock > Alarm_Time then
+		  Put_Line("Deadline exceeded!");
+		  Next_Time := Next_Time + Long_Period;
+		  -- presupposes that F3 always takes less than 1 second
+		  
+		  Running := False;
+	       end if;
+	       
+	    end select;
 	 end loop;
-	 
-	 Put_Line("Deadline exceeded!");
-	 Next_Time := Next_Time + Long_Period;
       end Watchdog;
 
    begin
       Put("F3 executing, time is now:");
       Put_Line(Duration'Image(Clock - Start_Time));
-      delay Long_Period;
-      abort Watchdog;
+      delay 0.2;
+      --delay Long_Period;
+      Watchdog.Stop;
+   exception
+      when Tasking_Error => null;
    end F3;
    
 begin
