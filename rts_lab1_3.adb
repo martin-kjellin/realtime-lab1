@@ -15,17 +15,17 @@ procedure rts_lab1_3 is
    end;
    
    task body Buffer is
-      Size: constant Integer := 15;
-      B: array (1..size) of Integer;
-      Front: Integer := 0;
-      Number: Integer range 0..Size := 0;
+      Size : constant Integer := 15;
+      B : array (1..Size) of Integer;
+      Front : Integer := 0;
+      Number : Integer range 0..Size := 0;
       Running : Boolean := True;
    begin
       while Running = True loop
 	 select
 	    when Number < Size =>
 	       accept Put(X : in Integer) do
-		  B((Front + Number) mod Size + 1):= X;
+		  B((Front + Number) mod Size + 1) := X;
 		  Number := Number + 1;
 	       end Put;
 	       
@@ -33,7 +33,7 @@ procedure rts_lab1_3 is
 	    
 	    accept Get(X : out Integer) do 
 	       if (Number > 0) then
-		  B(Front mod Size) := X;
+		  X := B(Front mod Size + 1);
 		  Number := Number - 1;
 		  Front := Front + 1;
 	       else
