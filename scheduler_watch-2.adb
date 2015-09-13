@@ -4,7 +4,7 @@ use Ada.Text_IO, Calendar, Ada.Numerics.Float_Random;
 
 procedure Scheduler_Watch is
    Short_Period : Duration := 0.5;
-   Long_Period : Duration := 1.5;
+   Long_Period : Duration := 1.0;
    -- Start_Time : Time := Clock;
    -- Next_Time : Time := Start_Time + Short_Period;   
    Start_Time : Time;
@@ -26,46 +26,38 @@ procedure Scheduler_Watch is
    
    procedure F3 is
       task Watchdog is
-	 entry Stop;
-      end;
-      
+         entry stop;
+      end Watchdog;
+
       task body Watchdog is
-	 Alarm_Time : Time := Clock + Short_Period;
-	 Running : Boolean := True;
+         Alarm_Time : Time := Clock + Short_Period;
       begin
-	 while Running = True loop
-	    select
-	       
-	       accept Stop do
-		  Running := False;
-	       end Stop;
-	       
-	    else
-	       
-	       if Clock > Alarm_Time then
-		  Put_Line("Deadline exceeded!");
-		  Next_Time := Next_Time + Long_Period;
-		  -- presupposes that F3 always takes less than 1 second
-		  
-		  Running := False;
-	       end if;
-	       
-	    end select;
-	 end loop;
+         loop 
+            select 
+               accept stop do exit loop;
+               end stop;
+            end select;
+
+            Put_Line("Deadline_exceeded.");
+         end loop;
+               
+         -- checking_loop : loop
+         --    if(Clock < Alarm_Time) then null;
+         --    else 
+               
+         --       exit checking_loop;
+         --    end if;
+         -- end loop checking_loop;
+         
       end Watchdog;
 
    begin
       Put("F3 executing, time is now:");
       Put_Line(Duration'Image(Clock - Start_Time));
-      if(F3exeutedtime > 0.5) then
-         delay 0.5;
-      else delay 0.1;
+      delapy
+      if(F3exeutedtime < 0.5) then 
+         Watchdog.stop;
       end if;
-      --delay Long_Period;
-      Watchdog.Stop;
-   exception
-      when Tasking_Error => null;
-
    end F3;
    
 begin
