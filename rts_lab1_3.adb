@@ -2,7 +2,10 @@
 --Real Time System Lab1
 with Ada.Text_IO; -- Use package Ada.Text_IO
 use Ada.Text_IO; -- Integrate its namespace
-		 --with Ada.Calendar; -- Use package Ada.Calendar
+with Ada.Numerics.Discrete_Random;
+use Ada.Numerics.Discrete_Random;
+--with Ada.Calendar; 
+-- Use package Ada.Calendar
 		 --use Ada.Calendar;
 		 --with Ada.Numerics.Float_Random;
 		 --use Ada.Numerics.Float_Random;
@@ -30,19 +33,15 @@ procedure rts_lab1_3 is
 	       end Put;
 	       
 	 or
-	    
-	    accept Get(X : out Integer) do 
-	       if (Number > 0) then
+	    when Number > 0 =>
+	       accept Get(X : out Integer) do 
 		  B(Front mod Size) := X;
 		  Number := Number - 1;
 		  Front := Front + 1;
-	       else
-		  Put_Line("Buffer is empty");
-	       end if;
-	    end Get;
+	       end Get;
 	    
 	 or
-	    
+	
 	    accept Stop do
 	       Running := False;
 	    end Stop;
@@ -64,7 +63,15 @@ procedure rts_lab1_3 is
       --      Producer.Stop;
       Buffer.Stop;
    end Consumer;
-
+   
+   task body Producer is
+      G : Generator;
+      Produce_Range : constant Interage := 26;
+   begin
+      reset(G);
+      Buffer.Put(Radom(G) % Produce_Range);
+   end Producer;
+   
 begin 
    null;
 end rts_lab1_3;
