@@ -11,6 +11,7 @@ procedure rts_lab1_4 is
    protected Buffer is -- Declarations of the Buffer
       entry Put(X : in integer);
       entry Get(X : out integer);
+	  entry Stop;
    private
       Front : Integer := 0; -- Point to the top position of the Buffer
       Running : Boolean := True; -- keep running Buffer(True) or not(False)
