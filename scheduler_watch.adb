@@ -36,7 +36,8 @@ procedure Scheduler_Watch is
    end;
       
    task body Watchdog is
-     Alarm_Time : Time := Clock + Short_Period; -- check the time if is more than 0.5	     Running : Boolean := True; -- if F3 execute less than 0.5 should stop the watchdog
+     Alarm_Time : Time := Clock + Short_Period; -- check the time if is more than 0.5	     
+     Running : Boolean := True; -- if F3 execute less than 0.5 should stop the watchdog
    begin
 	  while Running = True loop
      select
