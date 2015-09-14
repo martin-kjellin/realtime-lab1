@@ -6,31 +6,30 @@ procedure rts_lab1_4 is
    package Integer_Random is new Ada.Numerics.Discrete_Random(Integer);
    use Integer_Random;
    
+   Size :constant Integer := 15; -- Size of the Buffer
+   type buffer_array is array (1..Size) of Integer;-- Container of the Buffer
    protected Buffer is -- Declarations of the Buffer
       entry Put(X : in integer);
       entry Get(X : out integer);
    private
-      Size : Integer := 15; -- Size of the Buffer
-      B : array (1..Size) of Integer; -- Container of the Buffer
       Front : Integer := 0; -- Point to the top position of the Buffer
       Running : Boolean := True; -- keep running Buffer(True) or not(False)
       Number : Integer range 0..Size := 0; -- The number of integers in the Buffer  
    end Buffer;
 
    protected body Buffer is -- Definition of Buffer task 
-      entry Put(X : in integer) when Number < Size is-- if the Buffer is not full 
-      begin
-	B((Front + Number) mod Size + 1) := X; -- put x on the bottom 
-	Number := Number + 1; -- The number of integers in the Buffer plus one
-      end Put;
+		entry Put(X : in integer) when Number < Size is-- if the Buffer is not full 
+		begin
+			buffer_array((Front + Number) mod Size + 1) := X; -- put x on the bottom 
+			Number := Number + 1; -- The number of integers in the Buffer plus one
+		end Put;
 	  
-      entry Get(X : out integer) when Number > 0 is -- if the Buffer is not empty
-	 begin
-	   
-		  X := B(Front mod Size + 1); -- get x from the top of the buffer
+		entry Get(X : out integer) when Number > 0 is -- if the Buffer is not empty
+		begin
+		  X := buffer_array(Front mod Size + 1); -- get x from the top of the buffer
 		  Number := Number - 1; -- The number of integers in the Buffer minus one 
 		  Front := Front + 1; -- Point to the next top position of the Buffer
-	       end Get;
+	    end Get;
    end Buffer;
    
    task Producer is -- Declarations of the Producer
