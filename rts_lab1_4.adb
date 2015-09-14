@@ -18,19 +18,33 @@ procedure rts_lab1_4 is
    end Buffer;
 
    protected body Buffer is -- Definition of Buffer task 
-		entry Put(X : in integer) when Number < Size is-- if the Buffer is not full 
-		begin
-			buffer_array((Front + Number) mod Size + 1) := X; -- put x on the bottom 
-			Number := Number + 1; -- The number of integers in the Buffer plus one
-		end Put;
-	  
-		entry Get(X : out integer) when Number > 0 is -- if the Buffer is not empty
-		begin
+begin
+      while Running = True loop
+	 select
+	    when Number < Size => -- if the Buffer is not full
+	       accept Put(X : in Integer) do
+		  buffer_array((Front + Number) mod Size + 1) := X; -- put x on the bottom 
+		  Number := Number + 1; -- The number of integers in the Buffer plus one
+	       end Put;
+	       
+	 or
+
+	    when Number > 0 => -- if the Buffer is not empty
+	       accept Get(X : out Integer) do 
 		  X := buffer_array(Front mod Size + 1); -- get x from the top of the buffer
 		  Number := Number - 1; -- The number of integers in the Buffer minus one 
 		  Front := Front + 1; -- Point to the next top position of the Buffer
-	    end Get;
-   end Buffer;
+	       end Get;
+	    
+	 or
+	
+	    accept Stop do
+	       Running := False;
+	    end Stop;
+	    
+	 end select;
+      end loop;
+   end buffer;
    
    task Producer is -- Declarations of the Producer
       entry Stop;
