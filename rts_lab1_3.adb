@@ -38,22 +38,17 @@ procedure RTS_Lab1_3 is
 	       B((Front + Number) mod Size + 1) := X;
 	       Number := Number + 1;
 	       end Put;
-	       
 	 or
-
 	    when Number > 0 => -- If the buffer is not empty.
 	       accept Get(X : out Integer) do 
 	       X := B(Front mod Size + 1);
 	       Number := Number - 1;
 	       Front := Front + 1;
 	       end Get;
-	       
 	 or
-	    
 	    accept Stop do
 	       Running := False;
 	    end Stop;
-	    
 	 end select;
       end loop;
    end Buffer;
@@ -75,8 +70,7 @@ procedure RTS_Lab1_3 is
 	    end Stop;
 	 else
 	    New_Value := Integer_Random.Random(G) mod 26;
-	    Put("Producer inserts:");
-	    Put_Line(Integer'Image(New_Value));
+	    Put_Line("Producer inserts:" & Integer'Image(New_Value));
 	    Buffer.Put(New_Value);
 	    delay Duration(Ada.Numerics.Float_Random.Random(F));
 	 end select;
@@ -92,8 +86,7 @@ procedure RTS_Lab1_3 is
       Ada.Numerics.Float_Random.Reset(E);
       while Sum <= 100 loop
 	 Buffer.Get(New_Value);
-	 Put("Consumer gets:");
-	 Put_Line(Integer'Image(New_Value));
+	 Put_Line("Consumer gets:" & Integer'Image(New_Value));
 	 Sum := Sum + New_Value;
 	 delay Duration(Ada.Numerics.Float_Random.Random(E));
       end loop;
