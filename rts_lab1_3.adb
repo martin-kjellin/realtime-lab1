@@ -68,8 +68,7 @@ procedure rts_lab1_3 is
 	 else
 	    
 	    New_Value := Random(G) mod Produce_Range; -- Produce random number from 0 to 25
-	    Put("Producer Put to buffer:");
-	    Put_Line(Integer'Image(New_Value));
+	    Put_Line("Producer Put to buffer:" & Integer'Image(New_Value));
 	    Buffer.Put(New_Value); -- Put number into buffer
 	    
 	 end select;
@@ -82,8 +81,7 @@ procedure rts_lab1_3 is
    begin
       while Sum <= 100 loop -- loop while summerizes in consumer no more than 100
 	 Buffer.Get(New_Value); -- get number from buffer
-	 Put("Consumer get from buffer:");
-	 Put_Line(Integer'Image(New_Value));
+	 Put_Line("Consumer get from buffer:" & Integer'Image(New_Value));
 	 Sum := Sum + New_Value; -- summerized
       end loop;
       Producer.Stop;
