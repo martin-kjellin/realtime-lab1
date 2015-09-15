@@ -31,29 +31,29 @@ procedure Scheduler_Watch is
    
    procedure F3 is -- printing the executing time of F3 
                    -- with watchdog to check if F3 meets the deadline
-   task Watchdog is
+      task Watchdog is
 	 entry Stop;
-   end;
+      end;
       
-   task body Watchdog is
-     Alarm_Time : Time := Clock + Short_Period; -- check the time if is more than 0.5	     
-     Running : Boolean := True; -- if F3 execute less than 0.5 should stop the watchdog
-   begin
-	  while Running = True loop
-     select
-        accept Stop do
-          Running := False; -- Stop the watchdog
-          end Stop;
-	     else
-	      if Clock > Alarm_Time then
+      task body Watchdog is
+	 Alarm_Time : Time := Clock + Short_Period; -- check the time if is more than 0.5	     
+	 Running : Boolean := True; -- if F3 execute less than 0.5 should stop the watchdog
+      begin
+	 while Running = True loop
+	    select
+	       accept Stop do
+		  Running := False; -- Stop the watchdog
+	       end Stop;
+	    else
+	       if Clock > Alarm_Time then
 	          Put_Line("Deadline exceeded!");
 	          Next_Time := Next_Time + Long_Period;
-             -- presupposes that F3 always takes less than 1 second
-		       Running := False; -- stop the watchdog
-	      end if;  
-	     end select;
-	   end loop;
-   end Watchdog;
+		  -- presupposes that F3 always takes less than 1 second
+		  Running := False; -- stop the watchdog
+	       end if;  
+	    end select;
+	 end loop;
+      end Watchdog;
 
    begin
       Put("F3 executing, time is now:");
@@ -79,9 +79,9 @@ begin
       reset (G);
       F3exeutedtime := Random(G); -- generate a random number 
       if (F3exeutedtime>0.5) then
-            Put_Line("F3 executed more than 0.5.");
+	 Put_Line("F3 executed more than 0.5.");
       else
-            Put_Line("F3 executed less than 0.5.");
+	 Put_Line("F3 executed less than 0.5.");
       end if;
 
       Next_Time := Next_Time + Short_Period;
@@ -93,7 +93,7 @@ begin
       F1;
       F2;
       delay until Next_Time;
-       -- delay for 1.0 second that F3 only execute every other second
+      -- delay for 1.0 second that F3 only execute every other second
       Next_Time := Next_Time + Short_Period;
    end loop;
 end Scheduler_Watch;

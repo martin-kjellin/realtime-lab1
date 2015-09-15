@@ -29,21 +29,21 @@ procedure rts_lab1_3 is
 	 select
 	    when Number < Size => -- if the Buffer is not full
 	       accept Put(X : in Integer) do
-		  B((Front + Number) mod Size + 1) := X; -- put x on the bottom 
-		  Number := Number + 1; -- The number of integers in the Buffer plus one
+	       B((Front + Number) mod Size + 1) := X; -- put x on the bottom 
+	       Number := Number + 1; -- The number of integers in the Buffer plus one
 	       end Put;
 	       
 	 or
 
 	    when Number > 0 => -- if the Buffer is not empty
 	       accept Get(X : out Integer) do 
-		  X := B(Front mod Size + 1); -- get x from the top of the buffer
-		  Number := Number - 1; -- The number of integers in the Buffer minus one 
-		  Front := Front + 1; -- Point to the next top position of the Buffer
+	       X := B(Front mod Size + 1); -- get x from the top of the buffer
+	       Number := Number - 1; -- The number of integers in the Buffer minus one 
+	       Front := Front + 1; -- Point to the next top position of the Buffer
 	       end Get;
-	    
+	       
 	 or
-	
+	    
 	    accept Stop do
 	       Running := False;
 	    end Stop;
@@ -64,7 +64,7 @@ procedure rts_lab1_3 is
 	    accept Stop do
 	       Running := False;
 	    end Stop;
-	   
+	    
 	 else
 	    
 	    New_Value := Random(G) mod Produce_Range; -- Produce random number from 0 to 25
