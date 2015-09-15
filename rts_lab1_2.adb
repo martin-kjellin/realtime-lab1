@@ -1,55 +1,58 @@
--- Lab1 part two
+-- Lab 1, part 2
 with Ada.Text_IO, Calendar, Ada.Numerics.Float_Random;
 use Ada.Text_IO, Calendar, Ada.Numerics.Float_Random;
 
-procedure rts_lab1_2 is
-   Short_Period : Duration := 0.5;
-   -- delay for a short period for F3 to do after F1 and F2
-   Long_Period : Duration := 1.0;
-   -- delay for a long period while F3 only do every other second
-   little_time : Duration := 0.1; 
-   -- for F3 work less than 0.5 just delay for a s
-
+-- Executes three processes according to the following pattern:
+-- 1. F1 is executed every second.
+-- 2. F2 starts when F1 terminates.
+-- 3. F3 is executed every other second,
+--    starting 0.5 seconds after F1's start.
+-- If F3 takes more than 0.5 seconds to execute, a warning
+-- message is printed, and the next execution of F1 is
+-- delayed so that it starts at whole seconds.
+procedure RTS_Lab1_2 is
    Start_Time : Time;
-   Next_Time : Time; -- time for delay
+   Next_Time : Time; -- Time for next event.
 
-   G : Generator; -- generate a random number
-   F3exeutedtime : Uniformly_Distributed; 
-   -- a number from generator and decide the time for F3 to execute
-
-   procedure F1 is -- printing the executing time of F1
+   G : Generator; -- Used to generate random numbers.
+   
+   -- Prints the current time.
+   procedure F1 is
    begin
       Put("F1 executing, time is now:");
       Put_Line(Duration'Image(Clock - Start_Time));
    end F1;
    
-   procedure F2 is -- printint the executing time of F2
+   -- Prints the current time.
+   procedure F2 is
    begin
       Put("F2 executing, time is now:");
       Put_Line(Duration'Image(Clock - Start_Time));
    end F2;
    
-   procedure F3 is -- printing the executing time of F3 
-                   -- with watchdog to check if F3 meets the deadline
+   -- Prints the current time. Includes a watchdog to check
+   -- if the execution finishes within 0.5 seconds.
+   procedure F3 is
       task Watchdog is
 	 entry Stop;
       end;
       
       task body Watchdog is
-	 Alarm_Time : Time := Clock + Short_Period; -- check the time if is more than 0.5	     
-	 Running : Boolean := True; -- if F3 execute less than 0.5 should stop the watchdog
+	 Alarm_Time : Time := Clock + 0.5;	     
+	 Running : Boolean := True; -- The watchdog should
+	                            -- be stopped when F3
+	                            -- finishes executing.
       begin
 	 while Running = True loop
 	    select
 	       accept Stop do
-		  Running := False; -- Stop the watchdog
+		  Running := False; -- Stop the watchdog.
 	       end Stop;
 	    else
 	       if Clock > Alarm_Time then
 	          Put_Line("Deadline exceeded!");
-	          Next_Time := Next_Time + Long_Period;
-		  -- presupposes that F3 always takes less than 1 second
-		  Running := False; -- stop the watchdog
+	          Next_Time := Next_Time + 1.0; -- Delay F1.
+		  Running := False; -- Stop the watchdog.
 	       end if;  
 	    end select;
 	 end loop;
@@ -58,42 +61,38 @@ procedure rts_lab1_2 is
    begin
       Put("F3 executing, time is now:");
       Put_Line(Duration'Image(Clock - Start_Time));
-      if(F3exeutedtime < 0.5) then
-         delay little_time;
-      else delay Short_Period;
+      
+      Reset(G);
+      if Random(G) < 0.5 then
+         delay 0.1;
+      else delay 0.6;
       end if;
+      
       Watchdog.Stop;
    exception
       when Tasking_Error => null;
    end F3;
    
 begin
-   Start_Time := Clock; -- the start time start go with the clock time
-   Next_Time := Start_Time + Short_Period;
+   Start_Time := Clock; -- Store the current time.
+   Next_Time := Start_Time;
+   
    loop
-      F1; -- execute F1
-      F2; -- execute F2
-      delay until Next_Time;
-      -- delay for 0.5 second that F3 start at 0.5 after the execution of F1 and F2
-      
-      reset (G);
-      F3exeutedtime := Random(G); -- generate a random number 
-      if (F3exeutedtime>0.5) then
-	 Put_Line("F3 executed more than 0.5.");
-      else
-	 Put_Line("F3 executed less than 0.5.");
-      end if;
-
-      Next_Time := Next_Time + Short_Period;
-      F3;
-      delay until Next_Time;
-      -- delay for 0.5 second that F1 start again at the whole second
-      
-      Next_Time := Next_Time + Long_Period;
       F1;
       F2;
+      Next_Time := Next_Time + 0.5;
       delay until Next_Time;
-      -- delay for 1.0 second that F3 only execute every other second
-      Next_Time := Next_Time + Short_Period;
+      -- Make F3 start 0.5 seconds after the start of F1.
+      
+      F3;
+      Next_Time := Next_Time + 0.5;
+      delay until Next_Time;
+      -- Make F1 start 0.5 seconds after the start of F3.
+
+      F1;
+      F2;
+      Next_Time := Next_Time + 1.0;
+      delay until Next_Time;
+      -- Make the loop restart 1.0 seconds after the start of F1.
    end loop;
-end rts_lab1_2;
+end RTS_Lab1_2;
