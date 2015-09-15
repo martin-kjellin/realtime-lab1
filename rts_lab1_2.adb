@@ -2,7 +2,7 @@
 with Ada.Text_IO, Calendar, Ada.Numerics.Float_Random;
 use Ada.Text_IO, Calendar, Ada.Numerics.Float_Random;
 
-procedure Scheduler_Watch is
+procedure rts_lab1_2 is
    Short_Period : Duration := 0.5;
    -- delay for a short period for F3 to do after F1 and F2
    Long_Period : Duration := 1.0;
@@ -96,4 +96,4 @@ begin
       -- delay for 1.0 second that F3 only execute every other second
       Next_Time := Next_Time + Short_Period;
    end loop;
-end Scheduler_Watch;
+end rts_lab1_2;
